@@ -23,19 +23,8 @@ source_speech2 = source_speech2(1 : samplesToKeep);
 source_noise1 = source_noise1(1 : samplesToKeep);
 source_noise2 = source_noise2(1 : samplesToKeep);
 
-% Add RIR noise + source 1 + source 2
-mic = RIR_noise;
-mic(:,1) = mic(:,1) + RIR_sources(:,1,1) + RIR_sources(:,1,2);
-mic(:,2) = mic(:,2) + RIR_sources(:,2,1) + RIR_sources(:,2,2);
-mic(:,3) = mic(:,3) + RIR_sources(:,3,1) + RIR_sources(:,3,2);
-
-save('mic','mic','fs_RIR')
-
-figure % to plot the two mic signals
-hold on
-plot(mic(:,1))
-plot(mic(:,2))
-hold off
+mic = zeros(length(RIR_sources),length(m_pos));
+mic(:,1) = 
 
 
 
