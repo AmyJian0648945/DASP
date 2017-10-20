@@ -6,36 +6,60 @@ computed_rir = load('Computed_RIRs.mat'); % always call this before you start, b
 % User defined variables
 lenMicSig = 5; % length of desired microphone signal in seconds
 fs_source = [0 0 0 0];
+numOfMicsGUI = size(computed_rir.RIR_sources,2);
+numOfSourcesGUI = size(computed_rir.RIR_sources,3);
+numOfNoiseSourcesGUI = size(computed_rir.v_pos,1);
+numInputSource = 1; 
+numInputNoise = 1;
 
-[source_speech1,fs_source(1)] = audioread('speech1.wav');
-[source_speech2,fs_source(2)] = audioread('speech2.wav');
-[source_noise1,fs_source(3)] = audioread('Babble_noise1.wav');
-[source_noise2,fs_source(4)] = audioread('White_noise1.wav');
+source_speech = cell(numInputSource);
+source_noise = cell(numInputNoise);
 
-source_speech1 = resample(source_speech1,computed_rir.fs_RIR,fs_source(1));
-source_speech2 = resample(source_speech2,computed_rir.fs_RIR,fs_source(2));
-source_noise1 = resample(source_noise1,computed_rir.fs_RIR,fs_source(3));
-source_noise1 = resample(source_noise1,computed_rir.fs_RIR,fs_source(4));
+[source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
+% [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
+[source_noise{1,1},source_noise{1,2}] = audioread('Babble_noise1.wav');
+% [source_noise{2,1},source_noise{2,2}] = audioread('White_noise1.wav');
 
-samplesToKeep = fs_RIR.*lenMicSig;
-source_speech1 = source_speech1(1 : samplesToKeep);
-source_speech2 = source_speech2(1 : samplesToKeep);
-source_noise1 = source_noise1(1 : samplesToKeep);
-source_noise2 = source_noise2(1 : samplesToKeep);
 
-% Add RIR noise + source 1 + source 2
-mic = RIR_noise;
-mic(:,1) = mic(:,1) + RIR_sources(:,1,1) + RIR_sources(:,1,2);
-mic(:,2) = mic(:,2) + RIR_sources(:,2,1) + RIR_sources(:,2,2);
-mic(:,3) = mic(:,3) + RIR_sources(:,3,1) + RIR_sources(:,3,2);
+samplesToKeep = computed_rir.fs_RIR.*lenMicSig;
+for i = 1:numInputSource
+	source_speech{i,1} = resample(source_speech{i,1},computed_rir.fs_RIR,source_speech{i,2});
+	source_speech{i,1} = source_speech{i,1}(1:samplesToKeep);
+end
 
-save('mic','mic','fs_RIR')
+for i = 1:numInputNoise
+	source_noise{i,1} = resample(source_noise{i,1},computed_rir.fs_RIR,source_noise{i,2});
+	source_noise{i,1} = source_noise{i,1}(1:samplesToKeep);
+end
+
+
+
+for i = 1:numOfMicsGUI
+	tempSource = zeros(242549,1);
+	for j = 1:numOfSourcesGUI % Sum up the number of conv()
+		tempSource = tempSource + conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,j));
+	end
+	tempNoise = zeros(242549,1);
+	for k = 1:numOfNoiseSourcesGUI
+		tempNoise = tempNoise + conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,k));
+	end
+	mic(:,i) = tempSource + tempNoise;
+	
+	
+	
+end
+
+
+
+save('mic','mic','computed_rir.fs_RIR')
 
 figure % to plot the two mic signals
 hold on
 plot(mic(:,1))
 plot(mic(:,2))
 hold off
+
+% soundsc(mic(:,1),computed_rir.fs_RIR)
 
 
 
