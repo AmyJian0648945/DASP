@@ -1,3 +1,6 @@
+clear all; 
+
+
 % Purpose of this file: to read input files, then truncate the file by the user specified lenghth, 
 % and resample the signal according to the sampling frequency of the RIR
 
@@ -10,7 +13,7 @@ numOfMicsGUI = size(computed_rir.RIR_sources,2);
 numOfSourcesGUI = size(computed_rir.RIR_sources,3);
 numOfNoiseSourcesGUI = size(computed_rir.v_pos,1);
 numInputSource = 1; 
-numInputNoise = 1;
+numInputNoise = 0;
 
 source_speech = cell(numInputSource);
 source_noise = cell(numInputNoise);
@@ -33,16 +36,27 @@ for i = 1:numInputNoise
 end
 
 
-
+leng = length(conv(source_speech{1,1}, computed_rir.RIR_sources(:,1,1)));
 for i = 1:numOfMicsGUI
-	tempSource = zeros(242549,1);
-	for j = 1:numOfSourcesGUI % Sum up the number of conv()
-		tempSource = tempSource + conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,j));
+	tempSource = zeros(leng,1);
+	if(numOfSourcesGUI > 0)
+		tempSource = conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,1));
 	end
-	tempNoise = zeros(242549,1);
-	for k = 1:numOfNoiseSourcesGUI
-		tempNoise = tempNoise + conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,k));
+	if(numOfSourcesGUI > 1)
+		for j = 2:1:numOfSourcesGUI 
+			tempSource = tempSource + conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,j));
+		end
+	end 
+	tempNoise = zeros(leng,1);
+	if(numOfNoiseSourcesGUI > 0)
+		tempNoise = conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,1));
 	end
+	if(numOfNoiseSourcesGUI > 1)
+		for k = 2:1:numOfNoiseSourcesGUI
+			tempNoise = tempNoise + conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,k));
+		end
+	end 
+	
 	mic(:,i) = tempSource + tempNoise;
 	
 	
@@ -50,8 +64,8 @@ for i = 1:numOfMicsGUI
 end
 
 
-
-save('mic','mic','computed_rir.fs_RIR')
+fs = computed_rir.fs_RIR;
+save('mic','mic','fs')
 
 figure % to plot the two mic signals
 hold on
@@ -59,7 +73,7 @@ plot(mic(:,1))
 plot(mic(:,2))
 hold off
 
-% soundsc(mic(:,1),computed_rir.fs_RIR)
+ soundsc(mic(:,1),computed_rir.fs_RIR)
 
 
 
