@@ -1,6 +1,13 @@
-function [] = computeMicSig()
+%%% DESCRIPTION:
 
-computed_rir = load('Computed_RIRs.mat'); % always call this before you start, because you need the sampling frequency of the RIR
+
+
+
+function [mic] = computeMicSig(computed_rir)
+
+% always call this before you start, because you need the sampling frequency of the RIR
+% computed_rir = load('Computed_RIRs.mat'); 
+
 
 % User defined variables
 lenMicSig = 5; % length of desired microphone signal in seconds
