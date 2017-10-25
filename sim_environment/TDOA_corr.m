@@ -33,10 +33,8 @@ TDOAest = abs(lag(peakLocation));
 TDOAestError = TDOAest - TDOAgndTruth
 
 % Plot the Cross-correlation function, with ground truth marked
-% value = find (lag == TDOAgndTruth);
 figure
 hold on
 plot(r)
-stem(find(lag == TDOAgndTruth), peakValue)
-% stem(TDOAgndTruth)
+% stem(find(lag == TDOAgndTruth), peakValue) 
 hold off
