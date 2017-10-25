@@ -24,19 +24,15 @@ mic = computeMicSig(computed_rir);
 [r, lag] = xcorr(mic(:,1), mic(:,2));
 
 % Step 2: Peak Detection
-[peakValue, peakLocation] = max(r);
+[~, peakLocation] = max(r);
 
 % Step 3: Locate the delay
 TDOAest = abs(lag(peakLocation));
 
-% Chec=k the estimation against the ground truth 
+% Check the estimation against the ground truth 
 TDOAestError = TDOAest - TDOAgndTruth
 
 % Plot the Cross-correlation function, with ground truth marked
-% value = find (lag == TDOAgndTruth);
 figure
-hold on
+fh
 plot(r)
-stem(find(lag == TDOAgndTruth), peakValue)
-% stem(TDOAgndTruth)
-hold off
