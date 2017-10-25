@@ -17,13 +17,13 @@ source_speech = cell(numOfSources);
 source_noise = cell(numOfNoiseSources);
 
 % User defined variables (!!!)
-lenMicSig = 5;		% length of desired microphone signal [sec]
+lenMicSig = 0.5;		% length of desired microphone signal [sec]
 
 % User defined noise and speech source (!!!)
-[source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
+[source_speech{1,1},source_speech{1,2}] = audioread('White_noise1.wav');
 % [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
-[source_noise{1,1},source_noise{1,2}] = audioread('Babble_noise1.wav');
-% [source_noise{2,1},source_noise{2,2}] = audioread('White_noise1.wav');
+% [source_noise{1,1},source_noise{1,2}] = audioread('White_noise1.wav');
+% [source_noise{2,1},source_noise{2,2}] = audioread('Babble_noise1.wav');
 
 
 samplesToKeep = computed_rir.fs_RIR.*lenMicSig;
@@ -60,8 +60,6 @@ for i = 1:numOfMics
 	end 
 	
 	mic(:,i) = tempSource + tempNoise;
-	
-	
 	
 end
 

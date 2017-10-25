@@ -7,13 +7,14 @@ clear all;
 
 computed_rir = load('Computed_RIRs.mat'); 
 
-% Create the mic signal 
+% Function call - obtain the mic signal
 mic = computeMicSig(computed_rir); 
 
+% Save mic signal as a .mat variable
 fs = computed_rir.fs_RIR;
 save('mic','mic','fs')
 
-figure % to plot the two mic signals
+figure 
 hold on
 plot(mic(:,1))
 plot(mic(:,2))
