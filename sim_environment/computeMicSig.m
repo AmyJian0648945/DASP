@@ -5,6 +5,8 @@
 %	Note: Amount of noise sources in the GUI should be the same as the
 %	number of .wav noise sources - if there are multiple GUI noise sources,
 %	load the .wav file multiple times
+% 
+%	Note: The method of truncation that we used might yield an error
 
 
 function [mic] = computeMicSig(computed_rir)
@@ -17,11 +19,11 @@ source_speech = cell(numOfSources);
 source_noise = cell(numOfNoiseSources);
 
 % User defined variables (!!!)
-lenMicSig = 5;		% length of desired microphone signal [sec]
+lenMicSig = 15;		% length of desired microphone signal [sec]
 
 % User defined noise and speech source (!!!)
 [source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
-% [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
+[source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
 % [source_noise{1,1},source_noise{1,2}] = audioread('White_noise1.wav');
 % [source_noise{2,1},source_noise{2,2}] = audioread('Babble_noise1.wav');
 
