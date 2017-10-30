@@ -9,7 +9,7 @@
 %	Note: The method of truncation that we used might yield an error
 
 
-function [mic] = computeMicSig(computed_rir)
+function [mic] = computeMicSig(computed_rir,lengMicSig)
 
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2);
@@ -19,7 +19,7 @@ source_speech = cell(numOfSources);
 source_noise = cell(numOfNoiseSources);
 
 % User defined variables (!!!)
-lenMicSig = 15;		% length of desired microphone signal [sec]
+lenMicSig = lengMicSig;		% length of desired microphone signal [sec]
 
 % User defined noise and speech source (!!!)
 [source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
