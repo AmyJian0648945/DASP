@@ -11,33 +11,10 @@ lenMicSig = 10;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig);
 numOfMics = size(computed_rir.RIR_sources,2);
 
-%% STFT, with DFT window length L = 1024, and 50% overlap
+%% STFT, with DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
 L = 1024;
 
-% Make mic signal a multiple of 1024
-% eucli_remainder = mod(length(mic), L);
-% mic = [mic ; zeros((L - eucli_remainder),2)];
-% stftMatTemp = [];
-% stftMat = [];
-% for j=1:1:numOfMics
-% 	i = 0;
-% 	while(i.*L < length(mic))
-% 		stftMatTemp = [stftMatTemp fft(mic(1+i.*L/2 : L + L./2.*i, j), L)];
-% 		i = i+1;
-% 
-% 	end 
-% 	stftMat = cat(3, stftMat, stftMatTemp);
-% end
-
-first_stft = spectrogram(mic(:,i),hamming(L),L./2,L);
-size_stft = size(first_stft);
-stftMat = ones(size_stft(1),size_stft(2),numOfMics);
-stftMat(:,:,1) = first_stft;
-for j=2:1:numOfMics
-    stftMat(:,:,i) = spectrogram(mic(:,i),hamming(L),512,1024);
-    
+for i=1:1:numOfMics
+    stftMat(:,:,i) = spectrogram(mic(:,i), hamming(L), L./2, L);
 end
-
-
-
 
