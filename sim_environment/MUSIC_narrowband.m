@@ -11,10 +11,65 @@ lenMicSig = 10;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig);
 numOfMics = size(computed_rir.RIR_sources,2);
 
-%% STFT, with DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
-L = 1024;
 
+
+%% Find the STFT and the corresponding PSD 
+% DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
+L = 1024;
 for i=1:1:numOfMics
-    stftMat(:,:,i) = spectrogram(mic(:,i), hamming(L), L./2, L);
+    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hamming(L), L./2, L, computed_rir.fs_RIR, 'psd');
 end
+
+% Averaged over time and mic, find the max power; index is the frequency
+% bin with the highest power
+psd = mean(mean(psd, 2), 3); % avg over diff. frames & mic
+[~, indexMaxFreq] = max(psd);
+wMax = freq(indexMaxFreq);
+
+
+
+%% Create Ryy(w): MxM spatial correlation matrix
+
+% Creating components/initialising for the pseudospectrum
+theta = 0 : 0.5 : 180;
+Ryy = zeros(numOfMics,numOfMics,size(stftMat, 2));
+
+% Obtain 5x5 matrix for each frame (5 = # of mics)
+for i=1:1:size(stftMat, 2) 
+	y = reshape(stftMat(indexMaxFreq,i,:), [numOfMics,1]);
+	Ryy(:,:,i) = y*y';
+end
+
+% Take the average of all frames
+Ryy = mean(Ryy, 3);
+
+
+
+%% Create E(w): Mx(M-1) matrix
+
+% Perform eig. decomposition, and find the largest eigenvalue
+[E, eigVal] = eig(Ryy);
+eigVal = diag(eigVal);
+[~,maxEigVal] = max(eigVal);
+
+% Find and remove the corresponding eigenvector
+E(:,maxEigVal) = [];
+
+
+
+%% Create g(w,theta) = array manifold vector
+
+
+
+
+
+
+
+
+%% Evaluate the pseudospectrum
+% [S,f] = peig(x,p,nfft,fs);
+
+
+
+
 
