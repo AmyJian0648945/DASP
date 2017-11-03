@@ -30,8 +30,6 @@ wMax = freq(indexMaxFreq);
 
 %% Create Ryy(w): MxM spatial correlation matrix
 
-% Creating components/initialising for the pseudospectrum
-theta = 0 : 0.5 : 180;
 Ryy = zeros(numOfMics,numOfMics,size(stftMat, 2));
 
 % Obtain 5x5 matrix for each frame (5 = # of mics)
@@ -53,12 +51,25 @@ eigVal = diag(eigVal);
 [~,maxEigVal] = max(eigVal);
 
 % Find and remove the corresponding eigenvector
-eigVec(:,maxEigVal) = [];
+E(:,maxEigVal) = [];
 
 
 
+%% Create g(w,theta) = array manifold vector; TDOA=tau, DOA=theta
+
+dm = zeros(numOfMics,1);
+theta = 0 : 0.5 : 180;
+c = 340; % [m/s]
 
 
+% Calculate intermicrophone distance for all (compared to 1)
+intermicDist = norm(computed_rir.m_pos(1,:) - computed_rir.m_pos(2,:)); 
+for i=1:1:numOfMics
+	dm(i) =  (i-1).*intermicDist;
+end
+
+% Find tau(TDOA) function for each mic
+tau = dm .* () ./ (c);
 
 
 
