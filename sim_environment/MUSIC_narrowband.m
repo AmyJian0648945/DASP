@@ -7,9 +7,21 @@ if(computed_rir.fs_RIR ~= 44.1e3)
 end 
 
 % User defined variables (!!!)
-lenMicSig = 10;		% length of desired microphone signal [sec]
+lenMicSig = 1;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig);
 numOfMics = size(computed_rir.RIR_sources,2);
+
+
+
+%% Figure out if source position is lower or higher than mic
+distToFirstMic = norm(computed_rir.m_pos(1,:) - computed_rir.s_pos);
+distToLastMic = norm(computed_rir.m_pos(numOfMics,:) - computed_rir.s_pos);
+
+down = 0; up = 1; % flags
+
+if(distToFirstMic > distToLastMic) sourcePos = up; 
+else sourcePos = down; 
+end
 
 
 
@@ -17,7 +29,7 @@ numOfMics = size(computed_rir.RIR_sources,2);
 % DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
 L = 1024;
 for i=1:1:numOfMics
-    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hamming(L), L./2, L, computed_rir.fs_RIR, 'psd');
+    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hamming(L),  [], L, computed_rir.fs_RIR, 'psd');
 end
 
 % Averaged over time and mic, find the max power; index is the frequency
@@ -64,12 +76,20 @@ c = 340; % [m/s]
 
 % Calculate intermicrophone distance for all (compared to 1)
 intermicDist = norm(computed_rir.m_pos(1,:) - computed_rir.m_pos(2,:)); 
+
+
 for i=1:1:numOfMics
-	dm(i) =  (i-1).*intermicDist;
+	dm(i) = (i-1).*intermicDist;
 end
+
+
+
 
 % Find tau(TDOA) function for each mic
 tau = dm .* computed_rir.fs_RIR .* cos(theta) ./ c;
+if(sourcePos == up) 
+	tau = -tau;
+end
 
 % Create g(w=max freq bin, theta)
 g = exp(-1i .* wMax .* tau);
@@ -90,44 +110,6 @@ plot(theta, abs(pw))
 
 % Store the DOA estimate
 save('DOA_est.mat','DOA_est');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

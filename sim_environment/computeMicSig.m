@@ -23,25 +23,25 @@ lenMicSig = lengMicSig;		% length of desired microphone signal [sec]
 
 % User defined noise and speech source (!!!)
 [source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
-[source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
+% [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
 % [source_noise{1,1},source_noise{1,2}] = audioread('White_noise1.wav');
 % [source_noise{2,1},source_noise{2,2}] = audioread('Babble_noise1.wav');
 
 
 samplesToKeep = computed_rir.fs_RIR.*lenMicSig;
-for i = 1:numOfSources
+for i = 1:1:numOfSources
 	source_speech{i,1} = resample(source_speech{i,1},computed_rir.fs_RIR,source_speech{i,2});
 	source_speech{i,1} = source_speech{i,1}(1:samplesToKeep);
 end
 
-for i = 1:numOfNoiseSources
+for i = 1:1:numOfNoiseSources
 	source_noise{i,1} = resample(source_noise{i,1},computed_rir.fs_RIR,source_noise{i,2});
 	source_noise{i,1} = source_noise{i,1}(1:samplesToKeep);
 end
 
 
 leng = length(conv(source_speech{1,1}, computed_rir.RIR_sources(:,1,1)));
-for i = 1:numOfMics
+for i = 1:1:numOfMics
 	tempSource = zeros(leng,1);
 	if(numOfSources > 0)
 		tempSource = conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,1));

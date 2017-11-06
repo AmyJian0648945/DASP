@@ -7,7 +7,7 @@
 %	load the .wav file multiple times
 
 
-function [micSource, micNoise] = computeMicSig(computed_rir)
+function [micSource, micNoise] = computeMicSig_separateSources(computed_rir)
 
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2);
