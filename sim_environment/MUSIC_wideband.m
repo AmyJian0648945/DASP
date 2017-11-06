@@ -19,19 +19,24 @@ theta = deg2rad(theta);
 % DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
 L = 1024;
 for i=1:1:numOfMics
-    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hann(L), [], 2.*L, computed_rir.fs_RIR, 'psd');
+    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hann(L), [], 1*L, computed_rir.fs_RIR, 'psd');
 end
-
+pw = ones(length(theta),L./2);
 for k=2:1:L./2
     k
     freq_k = freq(k);
-	pw(:,k) = MUSIC_pseudoSpectrum_singFreq(k,freq_k,stftMat,computed_rir,theta);
+	pw(:,k-1) = MUSIC_pseudoSpectrum_singFreq(k,freq_k,stftMat,computed_rir,theta);
 end
 
 %% Computing P_hat(theta)
 
-log_p_hat = 1./(L./2 -1) * (sum(pw,2));
-p_hat = exp(log_p_hat);
+log_p_hat = 1./(L./2 -1) .* (sum(log(pw),2));
+% for l=1:1:length(log_p_hat)
+%     if (log_p_hat(l) > 75)
+%       log_p_hat(l) = 75;
+%     end
+% end
+p_hat = exp((log_p_hat));
 [peaks,locs] = findpeaks(abs(p_hat));
 [P,I] = sort(peaks,'descend');
 DOA_est = rad2deg(theta(locs(I(1:numOfSources))));
@@ -45,7 +50,7 @@ plot(theta, abs(p_hat))
 
 % Plot the pseudospectrum 
 figure('Name', 'Pseudospectrum p(\theta)');
-plot(theta, abs(pw))
+plot(theta, abs(log(pw)))
 
 
 
