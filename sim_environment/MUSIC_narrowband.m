@@ -10,18 +10,7 @@ end
 lenMicSig = 1;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig);
 numOfMics = size(computed_rir.RIR_sources,2);
-
-
-
-%% Figure out if source position is lower or higher than mic
-distToFirstMic = norm(computed_rir.m_pos(1,:) - computed_rir.s_pos);
-distToLastMic = norm(computed_rir.m_pos(numOfMics,:) - computed_rir.s_pos);
-
-down = 0; up = 1; % flags
-
-if(distToFirstMic > distToLastMic) sourcePos = up; 
-else sourcePos = down; 
-end
+numOfSources = size(computed_rir.s_pos,1);
 
 
 
@@ -88,11 +77,8 @@ end
 
 
 % Find tau(TDOA) function for each mic
-if(sourcePos == up)
-	tau = -dm .* cos(theta) ./ c;
-else
-	tau = -dm .* cos(theta) ./ c;
-end
+tau = -dm .* cos(theta) ./ c;
+
 
 % Create g(w=max freq bin, theta)
 g = exp(-1i .* wMax .* tau);
