@@ -1,5 +1,4 @@
-clear all;
-computed_rir = load('Computed_RIRs.mat');
+function [pw] = MUSIC_pseudoSpectrum_singFreq(index_freq)
 
 % Check if the sampling frequency is 44.1 kHz 
 if(computed_rir.fs_RIR ~= 44.1e3)
@@ -18,18 +17,14 @@ numOfSources = size(computed_rir.s_pos,1);
 % DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
 L = 1024;
 for i=1:1:numOfMics
-    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hann(L), [], 2.*L, computed_rir.fs_RIR, 'psd');
+    [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), L, [], 2.*L, computed_rir.fs_RIR, 'psd');
 end
 
-for k=2:1:L./2
-	
-end
-	
 % Averaged over time and mic, find the max power; index is the frequency
 % bin with the highest power
 psd = mean(mean(psd, 2), 3); % avg over diff. frames & mic
 [~, indexMaxFreq] = max(psd);
-wMax = freq(indexMaxFreq) .* 2 .* pi;
+wMax = freq(index_freq) .* 2 .* pi;
 
 
 
@@ -39,7 +34,7 @@ Ryy = zeros(numOfMics,numOfMics,size(stftMat, 2));
 
 % Obtain 5x5 matrix for each frame (5 = # of mics)
 for i=1:1:size(stftMat, 2) 
-	y = reshape(stftMat(indexMaxFreq,i,:), [numOfMics,1]);
+	y = reshape(stftMat(index_freq,i,:), [numOfMics,1]);
 	Ryy(:,:,i) = y*y';
 end
 
@@ -89,19 +84,7 @@ g = exp(-1i .* wMax .* tau);
 
 % Find the true DOA
 pw = diag(g'*E*E'*g).^-1; % should be scalar
-
-% [~,indexTrueDOA] = max(abs(pw));
-% DOA_est = (indexTrueDOA-1)./2;
-
-[~,locs] = findpeaks(abs(pw));
-DOA_est = rad2deg(theta(locs));
-
-% Plot the pseudospectrum
-figure('Name', 'Pseudospectrum');
-plot(theta, abs(pw))
-
-% Store the DOA estimate
-save('DOA_est.mat','DOA_est');
+end
 
 
 
