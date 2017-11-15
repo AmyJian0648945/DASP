@@ -63,12 +63,26 @@ save('DOA_est.mat','DOA_est');
 %% Plotting results  
 
 % Plot the pseudospectrum p_hat
+
+red_line = zeros(1,length(theta));
+red_line(locs(I(1:numOfSources))) = abs(p_hat(locs(I(1:numOfSources))));
+% Plot the pseudospectrum
 figure('Name', 'Pseudospectrum \hat{p}(\theta)');
-plot(theta, abs(p_hat))
+plot(abs(p_hat))
+xlabel('Samples (0->180)')
+ylabel('Amplitude')
+title('Pseudospectrum using wideband MUSIC algorithm ')
+hold on
+stem(red_line)
+% Store the DOA estimate
+save('DOA_est.mat','DOA_est');
 
 % Plot the pseudospectrum 
 figure('Name', 'Pseudospectrum p(\theta)');
 plot(theta, abs(log(pw)))
+xlabel('DOA (rad)')
+ylabel('Amplitude')
+title('Pseudospectrum p(\theta) for all freq bins')
 
 
 

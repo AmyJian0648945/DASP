@@ -7,7 +7,7 @@ if(computed_rir.fs_RIR ~= 44.1e3)
 end 
 
 % User defined variables (!!!)
-lenMicSig = 1;		% length of desired microphone signal [sec]
+lenMicSig = 10;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig); % yields matrix of micSigLength x numOfMics 
 numOfMics = size(computed_rir.RIR_sources,2);
 numOfSources = size(computed_rir.s_pos,1);
@@ -96,13 +96,24 @@ g = exp(-1i .* wMax .* tau);
 
 % Find the true DOA
 pw = diag(g'*E*E'*g).^-1; % should be scalar
-[~,locs] = findpeaks(abs(pw));
-DOA_est = rad2deg(theta(locs));
 
+[peaks,locs] = findpeaks(abs(pw));
+
+% sort the peaks in descending order, and only take into account the number
+%  of peaks that correspond to the number of sources
+[P,I] = sort(peaks,'descend');
+DOA_est = rad2deg(theta(locs(I(1:numOfSources))));
+
+red_line = zeros(1,length(theta));
+red_line(locs(1:numOfSources)) = abs(pw(locs(1:numOfSources)));
 % Plot the pseudospectrum
 figure('Name', 'Pseudospectrum');
-plot(theta, abs(pw))
-
+plot(abs(pw))
+xlabel('Samples (0->180)')
+ylabel('Amplitude')
+title('Pseudospectrum using narrowband MUSIC algorithm ')
+hold on
+stem(red_line)
 % Store the DOA estimate
 save('DOA_est.mat','DOA_est');
 

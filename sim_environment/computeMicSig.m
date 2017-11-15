@@ -13,7 +13,7 @@ function [mic] = computeMicSig(computed_rir,lengMicSig)
 
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2); %% number of microphones in the scenario
-numOfSources = size(computed_rir.RIR_sources,3); %% number of signal sources in the scenario
+numOfSources = size(computed_rir.s_pos,1); %% number of signal sources in the scenario
 numOfNoiseSources = size(computed_rir.v_pos,1); %% number of noise sources in the scenario
 source_speech = cell(numOfSources,2); % defining cells for audio sources 
 source_noise = cell(numOfNoiseSources,2);% defining cells for noise sources 
@@ -26,12 +26,12 @@ lenMicSig = lengMicSig;		% length of desired microphone signal [sec]
 % source_speech{i,1} is the signal itself while source speech is
 % source_speech{i,2} is the sampling frequency fs
 for i=1:1:numOfSources
-	[source_speech{i,1},source_speech{i,2}] = audioread('speech2.wav');
+	[source_speech{i,1},source_speech{i,2}] = audioread('speech1.wav');
 end
 for i=1:1:numOfNoiseSources
 	[source_noise{i,1},source_noise{i,2}] = audioread('White_noise1.wav');
 end
-
+[source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
 % resampling the signal at fs = fs_RIR instead of the sampling frequency of
 % the source speech + truncating the signal (given duration in lenMicSig )
 samplesToKeep = computed_rir.fs_RIR.*lenMicSig;

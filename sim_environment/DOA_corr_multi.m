@@ -6,7 +6,7 @@ clear all;
 computed_rir = load('Computed_RIRs.mat');
 
 delay = TDOA_corr_separateSource();
-numOfSources = size(computed_rir.RIR_sources,3);
+numOfSources = size(computed_rir.s_pos,1);
 
 d = norm(computed_rir.m_pos(1,:) - computed_rir.m_pos(2,:)); %intermicrophone distance
 c = 340; %[m/s]
