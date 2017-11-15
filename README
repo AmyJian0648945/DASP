@@ -8,6 +8,9 @@ Below are some clarification for function calls and what different files do
 
 	Note: Throughout our code, we use the function "computeMicSig.m" to compute the microphone signal because "create_micsig.m" additionally plots the signal, saves the mic signal as a .mat file, and plays back the signal
 
+	Note: Please write the appropriate speech file / noise file in the user defined variables of "computeMicSig.m". This should yield an error if there are not enough speech/noise files defined in this file. 
+	
+
 2.  MUSIC_wideband.m and MUSIC_pseudoSpectrum_singFreq()
 
 	MUSIC_wideband.m calls the function file MUSIC_pseudoSpectrum_singFreq()
