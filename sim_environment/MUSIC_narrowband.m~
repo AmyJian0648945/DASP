@@ -86,8 +86,7 @@ end
 %  the equation in order to yield units of [sec]
 tau = -dm .* cos(theta) ./ c;
 
-% Create g the array manifold vector
-%  where g: matrix of numOfMics x values of theta
+% Create g the array manifor (where wMax = max freq bin, theta)
 g = exp(-1i .* wMax .* tau);
 
 
@@ -96,6 +95,10 @@ g = exp(-1i .* wMax .* tau);
 
 % Find the true DOA
 pw = diag(g'*E*E'*g).^-1; % should be scalar
+
+% [~,indexTrueDOA] = max(abs(pw));
+% DOA_est = (indexTrueDOA-1)./2;
+
 [~,locs] = findpeaks(abs(pw));
 DOA_est = rad2deg(theta(locs));
 
