@@ -21,9 +21,11 @@ L = 1024;
 for i=1:1:numOfMics
     [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hann(L), [], 1*L, computed_rir.fs_RIR, 'psd');
 end
+
+% For each iterated frequency, evaluate the pseudo spectrum
+%  where pw: matrix of theta x 1
 pw = ones(length(theta),L./2);
 for k=2:1:L./2
-    k
     freq_k = freq(k);
 	pw(:,k-1) = MUSIC_pseudoSpectrum_singFreq(k,freq_k,stftMat,computed_rir,theta);
 end
