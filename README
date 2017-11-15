@@ -2,7 +2,7 @@ README
 
 Below are some clarification for function calls and what different files do
 
-1. 	create_migsig.m and computeMicSig.m
+1. 	create_migsig.m and computeMicSig.m and computeMicSig_separateSources.m
 
 	Depending on the situation (of whether or not the mic signals need to be considered separately or together), create_micsig.m calls either (i) computeMicSig.m or (ii) computeMicSig_separateSources. 
 
@@ -16,6 +16,10 @@ Below are some clarification for function calls and what different files do
 	MUSIC_wideband.m calls the function file MUSIC_pseudoSpectrum_singFreq()
 	
 	Note: MUSIC_pseudoSpectrum_singFreq() creates the pseudo spectrum of a single frequency. It takes in the STFT and the PSD data and outputs the psuedo spectrum for that frequency. 
+
+3. 	DOA_corr_mult.m and TDOA_corr_separateSource.m
+
+	DOA_corr_mult.m calls TDOA_corr_separateSource.m, which calls computeMicSig_separateSources.m
 
 
 
