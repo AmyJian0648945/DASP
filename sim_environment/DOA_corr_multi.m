@@ -1,6 +1,7 @@
 clear all; 
 %%% DESCRIPTION:
-% Cross-correlation-based direction-of-arrival (DOA) estimation
+% Cross-correlation-based direction-of-arrival (DOA) estimation for
+% multiple sources.
 
 computed_rir = load('Computed_RIRs.mat');
 
@@ -13,12 +14,12 @@ c = 340; %[m/s]
 DOA_est = ones(1,numOfSources);
 for i=1:1:numOfSources
 	DOA_est(i) = delay(i) .* c ./ (computed_rir.fs_RIR .* d);
-	if(DOA_est(i) < -1) DOA_est(i) = -1;
-	elseif(DOA_est(i) > 1) DOA_est(i) = 1;
+	if(DOA_est(i) < -1) DOA_est(i) = -1;%% to avoid complex numbers
+	elseif(DOA_est(i) > 1) DOA_est(i) = 1;%% to avoid complex numbers
 	else 
 	end 
 	DOA_est(i) = rad2deg(acos(DOA_est(i)));
-% 	DOA_est(i) = acos(DOA_est(i)) .* 180 ./ pi;
+
 end
 
 save('DOA_est.mat','DOA_est')
