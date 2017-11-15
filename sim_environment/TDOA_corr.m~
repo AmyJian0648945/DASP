@@ -5,11 +5,10 @@ function [TDOAest] =TDOA_corr()
 
 computed_rir = load('Computed_RIRs.mat');
 numOfMicrophones = length(computed_rir.m_pos);
-
+% Finds first point that is not zero
 
 %% Computing sample delay between the direct path components of the two RIRs.
-% This computation is done by indentifying index of first element that is
-% =/= from 0 for each RIR and then subtracting between adjacent microphone 
+% This computation is done by indenti
 index = [];
 for j=1:1:numOfMicrophones
 	i = 1;
@@ -27,7 +26,7 @@ end
 TDOAgndTruth = delay(1);
 
 % Generates the Microphone signal
-mic = computeMicSig(computed_rir,5);
+mic = computeMicSig(computed_rir);
 
 %% Estimation of TDOA via cross-correlation
 % Step 1: Cross Correlation
@@ -40,7 +39,7 @@ mic = computeMicSig(computed_rir,5);
 TDOAest = lag(peakLocation);
 
 % Check the estimation against the ground truth 
-TDOAestError = abs(TDOAest) - abs(TDOAgndTruth)
+TDOAestError = abs(TDOAest) - abs(TDOAgndTruth(1))
 
 % % Plot the Cross-correlation function, with ground truth marked
 % figure

@@ -6,7 +6,10 @@ function [TDOAest] =TDOA_corr_separateSource()
 
 computed_rir = load('Computed_RIRs.mat');
 numOfMicrophones = length(computed_rir.m_pos);
-% Finds first point that is not zero
+
+%% Computing sample delay between the direct path components of the two RIRs.
+% This computation is done by indentifying index of first element that is
+% =/= from 0 for each RIR and then subtracting between adjacent microphone 
 numOfSources = length(computed_rir.s_pos);
 index = ones(numOfSources,numOfMicrophones);
 delay = ones(numOfSources,numOfMicrophones-1);

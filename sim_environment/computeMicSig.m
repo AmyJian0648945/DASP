@@ -12,57 +12,65 @@
 function [mic] = computeMicSig(computed_rir,lengMicSig)
 
 % Initialisation
-numOfMics = size(computed_rir.RIR_sources,2);
-numOfSources = size(computed_rir.RIR_sources,3);
-numOfNoiseSources = size(computed_rir.v_pos,1); 
-source_speech = cell(numOfSources);
-source_noise = cell(numOfNoiseSources);
+numOfMics = size(computed_rir.RIR_sources,2); %% number of microphones in the scenario
+numOfSources = size(computed_rir.RIR_sources,3); %% number of signal sources in the scenario
+numOfNoiseSources = size(computed_rir.v_pos,1); %% number of noise sources in the scenario
+source_speech = cell(numOfSources,2); % defining cells for audio sources 
+source_noise = cell(numOfNoiseSources,2);% defining cells for noise sources 
 
 % User defined variables (!!!)
 lenMicSig = lengMicSig;		% length of desired microphone signal [sec]
 
-% User defined noise and speech source (!!!)
-[source_speech{1,1},source_speech{1,2}] = audioread('speech2.wav');
-[source_speech{2,1},source_speech{2,2}] = audioread('speech1.wav');
-[source_speech{3,1},source_speech{3,2}] = audioread('speech1.wav');
-% [source_noise{1,1},source_noise{1,2}] = audioread('White_noise1.wav');
-% [source_noise{2,1},source_noise{2,2}] = audioread('Babble_noise1.wav');
+% User defined noise and speech source (!!!)In this cas every audio sources
+% is playing 'speech2.wav' and every noise source is playing 'White_noise1.wav'
+% source_speech{i,1} is the signal itself while source speech is
+% source_speech{i,2} is the sampling frequency fs
+for i=1:1:numOfSources
+	[source_speech{i,1},source_speech{i,2}] = audioread('speech2.wav');
+end
+for i=1:1:numOfNoiseSources
+	[source_noise{i,1},source_noise{i,2}] = audioread('White_noise1.wav');
+end
 
-
+% resampling the signal at fs = fs_RIR instead of the sampling frequency of
+% the source speech + truncating the signal (given duration in lenMicSig )
 samplesToKeep = computed_rir.fs_RIR.*lenMicSig;
 for i = 1:1:numOfSources
-	source_speech{i,1} = resample(source_speech{i,1},computed_rir.fs_RIR,source_speech{i,2});
-	source_speech{i,1} = source_speech{i,1}(1:samplesToKeep);
+	source_speech{i,1} = resample(source_speech{i,1},computed_rir.fs_RIR,source_speech{i,2}); %% resampling
+	source_speech{i,1} = source_speech{i,1}(1:samplesToKeep); %% truncation 
 end
 
 for i = 1:1:numOfNoiseSources
-	source_noise{i,1} = resample(source_noise{i,1},computed_rir.fs_RIR,source_noise{i,2});
-	source_noise{i,1} = source_noise{i,1}(1:samplesToKeep);
+	source_noise{i,1} = resample(source_noise{i,1},computed_rir.fs_RIR,source_noise{i,2});%% resampling
+	source_noise{i,1} = source_noise{i,1}(1:samplesToKeep);%% truncation 
 end
 
 
-leng = length(conv(source_speech{1,1}, computed_rir.RIR_sources(:,1,1)));
+leng = length(filter(computed_rir.RIR_sources(:,1,1),1,source_speech{1,1}));
+mic = zeros(leng,numOfMics); % preallocation of mic siganls-> each column is a mic signal and there's
+% numOfMics columns 
 for i = 1:1:numOfMics
 	tempSource = zeros(leng,1);
 	if(numOfSources > 0)
-		tempSource = conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,1));
+		tempSource = filter(computed_rir.RIR_sources(:,i,1),1,source_speech{1,1}); %% audio signal is filtered by the Room IR
 	end
 	if(numOfSources > 1)
 		for j = 2:1:numOfSources 
-			tempSource = tempSource + conv(source_speech{1,1}, computed_rir.RIR_sources(:,i,j));
+			tempSource = tempSource + filter(computed_rir.RIR_sources(:,i,j),1,source_speech{j,1}); % each mic received a weighted sum of audio signal. Weights are the RIR 
 		end
-	end 
+    end 
+    
 	tempNoise = zeros(leng,1);
 	if(numOfNoiseSources > 0)
-		tempNoise = conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,1));
+		tempNoise = filter(computed_rir.RIR_noise(:,i,1),1,source_noise{1,1}); %% noise signal is filtered by the Room IR
 	end
 	if(numOfNoiseSources > 1)
 		for k = 2:1:numOfNoiseSources
-			tempNoise = tempNoise + conv(source_noise{1,1}, computed_rir.RIR_noise(:,i,k));
+			tempNoise = tempNoise + filter(computed_rir.RIR_noise(:,i,k),1,source_noise{k,1}); % each mic received a weighted sum of noise signal. Weights are the RIR
 		end
 	end 
 	
-	mic(:,i) = tempSource + tempNoise;
+	mic(:,i) = tempSource + tempNoise; % total signal received by the mic is AUDIO + NOISE
 	
 end
 

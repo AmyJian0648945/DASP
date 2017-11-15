@@ -8,7 +8,7 @@ clear all;
 computed_rir = load('Computed_RIRs.mat'); 
 
 % Function call - obtain the mic signal
-mic = computeMicSig(computed_rir); 
+mic = computeMicSig(computed_rir,5); 
 
 % Save mic signal as a .mat variable
 fs = computed_rir.fs_RIR;
