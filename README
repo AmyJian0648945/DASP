@@ -1,0 +1,37 @@
+README
+
+Below are some clarification for function calls and what different files do
+
+1. 	create_migsig.m and computeMicSig.m
+
+	Depending on the situation (of whether or not the mic signals need to be considered separately or together), create_micsig.m calls either (i) computeMicSig.m or (ii) computeMicSig_separateSources. 
+
+	Note: Throughout our code, we use the function "computeMicSig.m" to compute the microphone signal because "create_micsig.m" additionally plots the signal, saves the mic signal as a .mat file, and plays back the signal
+
+2.  MUSIC_wideband.m and MUSIC_pseudoSpectrum_singFreq()
+
+	MUSIC_wideband.m calls the function file MUSIC_pseudoSpectrum_singFreq()
+	
+	Note: MUSIC_pseudoSpectrum_singFreq() creates the pseudo spectrum of a single frequency. It takes in the STFT and the PSD data and outputs the psuedo spectrum for that frequency. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
