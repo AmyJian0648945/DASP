@@ -96,13 +96,24 @@ g = exp(-1i .* wMax .* tau);
 
 % Find the true DOA
 pw = diag(g'*E*E'*g).^-1; % should be scalar
-[~,locs] = findpeaks(abs(pw));
-DOA_est = rad2deg(theta(locs));
 
+[peaks,locs] = findpeaks(abs(pw));
+
+% sort the peaks in descending order, and only take into account the number
+%  of peaks that correspond to the number of sources
+[P,I] = sort(peaks,'descend');
+DOA_est = rad2deg(theta(locs(I(1:numOfSources))));
+
+red_line = zeros(1,length(theta));
+red_line(locs(1:numOfSources)) = abs(pw(locs(1:numOfSources)));
 % Plot the pseudospectrum
 figure('Name', 'Pseudospectrum');
-plot(theta, abs(pw))
-
+plot(abs(pw))
+xlabel('Samples (0->180)')
+ylabel('Amplitude')
+title('Pseudospectrum using narrowband MUSIC algorithm ')
+hold on
+stem(red_line)
 % Store the DOA estimate
 save('DOA_est.mat','DOA_est');
 

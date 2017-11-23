@@ -10,19 +10,32 @@ numOfMicrophones = length(computed_rir.m_pos);
 %% Computing sample delay between the direct path components of the two RIRs.
 % This computation is done by indentifying index of first element that is
 % =/= from 0 for each RIR and then subtracting between adjacent microphone 
-numOfSources = length(computed_rir.s_pos);
+numOfSources = size(computed_rir.s_pos,1);
 index = ones(numOfSources,numOfMicrophones);
 delay = ones(numOfSources,numOfMicrophones-1);
 for k=1:1:numOfSources
-	for j=1:1:numOfMicrophones
-		i = 1;
-		while (computed_rir.RIR_sources(i,j,k) <= 0) i = i+1; end
-		index(k,j) = i;
-	end
-	
-	for j=1:1:numOfMicrophones-1
-		delay(k,j) = index(k,j+1)-index(k,j);
-	end
+    if numOfSources ==1
+        for j=1:1:numOfMicrophones
+            i = 1;
+            while (computed_rir.RIR_sources(i,j) <= 0) i = i+1; end
+            index(k,j) = i;
+        end
+
+        for j=1:1:numOfMicrophones-1
+            delay(k,j) = index(k,j+1)-index(k,j);
+        end
+        
+    else 
+        for j=1:1:numOfMicrophones
+            i = 1;
+            while (computed_rir.RIR_sources(i,j,k) <= 0) i = i+1; end
+            index(k,j) = i;
+        end
+
+        for j=1:1:numOfMicrophones-1
+            delay(k,j) = index(k,j+1)-index(k,j);
+        end
+    end
 end
 
 
@@ -57,14 +70,14 @@ for i=1:1:numOfSources
 	% Step 3: Locate the delay
 	TDOAest(i) = lag(peakLocation(i), i);
 	% Chec=k the estimation against the ground truth 
-	TDOAestError(i) = TDOAest(i) - TDOAgndTruth(i);
+	TDOAestError(i) = abs(TDOAest(i)) - abs(TDOAgndTruth(i))
 end
 
 
-% % Plot the Cross-correlation function, with ground truth marked
-% figure
-% hold on
-% plot(r)
-% % stem(find(lag == TDOAgndTruth), peakValue) 
-% hold off
+% Plot the Cross-correlation function, with ground truth marked
+figure
+hold on
+plot(r)
+stem(find(lag == TDOAgndTruth), peakValue) 
+hold off
 end
