@@ -7,14 +7,15 @@ clear all;
 
 computed_rir = load('Computed_RIRs.mat'); 
 
+
+%%% User Defined Variables %%%
+SourceFile = {'speech1.wav', 'speech2.wav'};
+NoiseFile = {'White_noise1.wav', 'Babble_noise2.wav'};
 flag_output = 3;
+flag_input = 2;
 
-
-
-% Function call - obtain the mic signal
 mic = []; micSource = []; micNoise = [];
-
-[mic, micSource, micNoise] = computeMicSig(computed_rir,10,3,1,1,1,1,1); 
+[mic, micSource, micNoise] = computeMicSig(computed_rir,10,flag_output,flag_input,SourceFile, NoiseFile); 
 
 % Save mic signal as a .mat variable
 fs = computed_rir.fs_RIR;

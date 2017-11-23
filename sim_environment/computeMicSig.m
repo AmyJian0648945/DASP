@@ -7,10 +7,10 @@
 %		flag_output == 2: Output is [~, micSource, micNoise]
 %		flag_output == 3: Output is [~, micSource, micNoise] + 10% power of the power 
 %	- flag_input (shows how source / noise should be formatted in the output)
-%		flag_input  == 1: Input sources are all name_source1
-%		flag_input  == 2: Input source 1 = name_source1, input source 2 = name_source2
-%		flag_input  == 3: input noise are all name_noise1
-%		flag_input  == 4: Input noise 1 = name_noise1, input noise 2 = name_noise2
+%		flag_input  == 1: Sources, Noises are all the same 
+%		flag_input  == 2: Noises are all the same, sources are all different
+%		flag_input  == 3: Sources are all the same, noises are all different
+%		flag_input  == 4: Sources, Noises are all different
 % 	Output: mic (variable; conv(noise, noiseRIR) + conv(sig, sigRIR)
 % 
 %	Note: Amount of noise sources in the GUI should be the same as the
@@ -20,7 +20,7 @@
 %	Note: The method of truncation that we used might yield an error
 
 
-function [mic, micSource, micNoise] = computeMicSig(computed_rir,lenMicSig, flag_output, flag_input, name_source1, name_source2, name_noise1, name_noise2)
+function [mic, micSource, micNoise] = computeMicSig(computed_rir,lenMicSig, flag_output, flag_input, filename_source, filename_noise)
 
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2); %% number of microphones in the scenario
@@ -29,21 +29,82 @@ numOfNoiseSources = size(computed_rir.v_pos,1); %% number of noise sources in th
 source_speech = cell(numOfSources,2); % defining cells for audio sources 
 source_noise = cell(numOfNoiseSources,2);% defining cells for noise sources 
 
-% User defined noise and speech source (!!!)In this case every audio sources
-% is playing 'speech2.wav' and every noise source is playing 'White_noise1.wav'
+
 % source_speech{i,1} is the signal itself while source speech is
 % source_speech{i,2} is the sampling frequency fs
 
-for i=1:1:numOfSources
-	[source_speech{i,1},source_speech{i,2}] = audioread('speech1.wav');
-end
-% [source_speech{1,1},source_speech{1,2}] = audioread('speech1.wav');
-% [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
+% Formating the sources based on 'flag_input'
+if(flag_input == 1) %% All sources are the same
+	%%% Sources %%%
+	for i=1:1:numOfSources
+		[source_speech{i,1},source_speech{i,2}] = audioread(filename_source{1});
+	end
+	
+	%%% Noises %%%
+	for i=1:1:numOfNoiseSources
+		[source_noise{i,1},source_noise{i,2}] = audioread(filename_noise{1});
+	end
+elseif(flag_input == 2) %% Sources are different, noises are the same
+	
+	%%% Sources %%%
+	if(numOfSources ~= size(filename_source,2)) 
+		error('Number of sources in the GUI must be the same as the number of .wav files given by the user!')
+	end
+	for i=1:1:numOfSources
+		[source_speech{i,1},source_speech{i,2}] = audioread(filename_source{i});
+	end
+	
+	%%% Noises %%%
+	for i=1:1:numOfNoiseSources
+		[source_noise{i,1},source_noise{i,2}] = audioread(filename_noise{1});
+	end
+	
+elseif(flag_input == 3) %% Sources are the same, Noises are different
+	
+	%%% Sources %%%
+	for i=1:1:numOfSources
+		[source_speech{i,1},source_speech{i,2}] = audioread(filename_source{1});
+	end
+	
+	%%% Noises %%%
+	if(numOfNoiseSources ~= size(filename_noise,2)) 
+		error('Number of sources in the GUI must be the same as the number of .wav files given by the user!')
+	end
+	for i=1:1:numOfNoiseSources
+		[source_noise{i,1},source_noise{i,2}] = audioread(filename_noise{i});
+	end
+	
+elseif(flag_input == 4) %% All sources are different!
+	
+	%%% Sources %%%
+	if(numOfSources ~= size(filename_source,2)) 
+		error('Number of sources in the GUI must be the same as the number of .wav files given by the user!')
+	end
+	for i=1:1:numOfSources
+		[source_speech{i,1},source_speech{i,2}] = audioread(filename_source{i});
+	end
+	
+	%%% Noises %%%
+	if(numOfNoiseSources ~= size(filename_noise,2)) 
+		error('Number of sources in the GUI must be the same as the number of .wav files given by the user!')
+	end
+	for i=1:1:numOfNoiseSources
+		[source_noise{i,1},source_noise{i,2}] = audioread(filename_noise{i});
+	end
 
-for i=1:1:numOfNoiseSources
-	[source_noise{i,1},source_noise{i,2}] = audioread('Babble_noise1.wav');
-end
-[source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
+else
+	error('Please enter a flag_input value [1,4]')
+end 
+
+
+
+
+
+
+
+
+
+% [source_speech{2,1},source_speech{2,2}] = audioread('speech2.wav');
 % resampling the signal at fs = fs_RIR instead of the sampling frequency of
 % the source speech + truncating the signal (given duration in lenMicSig )
 samplesToKeep = computed_rir.fs_RIR.*lenMicSig;
