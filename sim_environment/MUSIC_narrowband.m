@@ -7,7 +7,7 @@ if(computed_rir.fs_RIR ~= 44.1e3)
 end 
 
 % User defined variables (!!!)
-lenMicSig = 1;		% length of desired microphone signal [sec]
+lenMicSig = 10;		% length of desired microphone signal [sec]
 mic = computeMicSig(computed_rir,lenMicSig); % yields matrix of micSigLength x numOfMics 
 numOfMics = size(computed_rir.RIR_sources,2);
 numOfSources = size(computed_rir.s_pos,1);

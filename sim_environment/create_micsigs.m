@@ -7,20 +7,27 @@ clear all;
 
 computed_rir = load('Computed_RIRs.mat'); 
 
+flag_output = 3;
+
+
+
 % Function call - obtain the mic signal
-mic = computeMicSig(computed_rir,5); 
+mic = []; micSource = []; micNoise = [];
+
+[mic, micSource, micNoise] = computeMicSig(computed_rir,10,3,1,1,1,1,1); 
 
 % Save mic signal as a .mat variable
 fs = computed_rir.fs_RIR;
-save('mic','mic','fs')
 
-figure 
-hold on
-plot(mic(:,1))
-plot(mic(:,2))
-hold off
+load('SNR_in.mat')
+load('mic.mat')
+% figure 
+% hold on
+% plot(mic(:,1))
+% plot(mic(:,2))
+% hold off
 
-soundsc(mic(:,1),computed_rir.fs_RIR)
+% soundsc(mic(:,1),computed_rir.fs_RIR)
 
 
 

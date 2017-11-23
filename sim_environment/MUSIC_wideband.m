@@ -7,8 +7,8 @@ if(computed_rir.fs_RIR ~= 44.1e3)
 end 
 
 % User defined variables (!!!)
-lenMicSig = 1;		% length of desired microphone signal [sec]
-mic = computeMicSig(computed_rir,lenMicSig);
+lenMicSig = 10;		% length of desired microphone signal [sec]
+[mic, micSource, micNoise] = computeMicSig(computed_rir,lenMicSig, 3, 0, 0, 0, 0, 0);
 numOfMics = size(computed_rir.RIR_sources,2);
 numOfSources = size(computed_rir.s_pos,1);
 theta = 0 : 0.5 : 180;
