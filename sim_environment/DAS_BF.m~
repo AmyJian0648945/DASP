@@ -87,19 +87,9 @@ noise_DAS = sum(micNoise,2)./numOfMics;
 figure 
 plot(mic(:,1))
 hold on 
-plot(DAS_out)
+plot(DAS_out,,)
 
-%% Computation of SNR for the DAS
-%%% the theoretical gain should be M (#number of microphones) --> + 7dB for
-%%% M = 5
-VAD = abs(speech_DAS(:,1))>std(speech_DAS(:,1))*1e-3;
-% Find the power of the signal of mic1 (where its active)
-speechPower = var(speech_DAS(VAD==1,1));
-noisePower = var(noise_DAS(:,1));
-SNR_out_DAS = 10*log10(speechPower ./ noisePower);
-save('SNR_out_DAS','SNR_out_DAS');
-load('SNR_in.mat');
 %% results 
-%soundsc(DAS_out,fs)
+soundsc(DAS_out,fs)
 
 

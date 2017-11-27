@@ -120,7 +120,9 @@ end
 
 
 leng = length(filter(computed_rir.RIR_sources(:,1,1),1,source_speech{1,1}));
-mic = zeros(leng,numOfMics); % preallocation of mic siganls-> each column is a mic signal and there's
+mic = zeros(leng,numOfMics);
+noiseTot= zeros(leng,numOfMics);
+speechTot = zeros(leng,numOfMics);% preallocation of mic siganls-> each column is a mic signal and there's
 % numOfMics columns 
 micSource = []; micNoise = [];
 
@@ -149,30 +151,34 @@ if(flag_output == 1 || flag_output == 3)
 
 		if(flag_output==1) 
 			mic(:,i) = speech + noise; % total signal received by the mic is AUDIO + NOISE
-		end
+        end
+        if(flag_output==3) 
+			speechTot(:,i) = speech;
+            noiseTot(:,i) = noise;% total signal received by the mic is AUDIO + NOISE
+        end
 	end
 	
 	if(flag_output == 3) %%% For Session 3 %%%
 		
 		% Identify where speech signals are active
-		VAD = abs(speech(:,1))>std(speech(:,1))*1e-3;
+		VAD = abs(speechTot(:,1))>std(speechTot(:,1))*1e-3;
 
 		% Find the power of the signal of mic1 (where its active)
-		speechPower = var(speech(VAD==1,1));
+		speechPower = var(speechTot(VAD==1,1));
 		noiseVar = 0.1*speechPower;
-		addWhiteGausNoise = random('Normal', 0, sqrt(noiseVar), size(speech,1), size(speech,2));
+		addWhiteGausNoise = random('Normal', 0, sqrt(noiseVar), size(mic,1), size(mic,2));
 
 		% Add the noise to 'speech'
-		mic = speech + addWhiteGausNoise + noise; 
+		mic = speechTot+ addWhiteGausNoise + noiseTot; 
 
 		% Compute SNR
-		noisePower = var(addWhiteGausNoise(:,1) + noise(:,1));
-		SNR = 10*log10(speechPower ./ noisePower)
+		noisePower = var(addWhiteGausNoise(:,1) + noiseTot(:,1));
+		SNR = 10*log10(speechPower ./ noisePower);
 
 		save('SNR_in','SNR');
 		save('mic','mic','speech','addWhiteGausNoise','SNR');
-		micSource = speech; 
-		micNoise = addWhiteGausNoise + noise; 
+		micSource = speechTot; 
+		micNoise = addWhiteGausNoise + noiseTot; 
 	end
 		
 		
