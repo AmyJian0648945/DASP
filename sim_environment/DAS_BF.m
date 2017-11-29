@@ -2,11 +2,13 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
-NoiseFile = {};% {'White_noise1.wav', 'Babble_noise1.wav'};
+NoiseFile =  {'speech2.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
-[mic, micSource, micNoise] = computeMicSig(computed_rir,10,flag_output,flag_input,SourceFile, NoiseFile); 
+sourceLength = 3;
+
+[mic, micSource, micNoise] = computeMicSig(computed_rir,sourceLength,flag_output,flag_input,SourceFile, NoiseFile); 
 fs = computed_rir.fs_RIR;
 load('SNR_in.mat');
 %load('mic.mat');
@@ -98,7 +100,10 @@ speechPower = var(speech_DAS(VAD==1,1));
 noisePower = var(noise_DAS(:,1));
 SNR_out_DAS = 10*log10(speechPower ./ noisePower);
 save('SNR_out_DAS','SNR_out_DAS');
-load('SNR_in.mat');
+load('SNR_in.mat'); 
+
+SNR
+SNR_out_DAS
 %% results 
 %soundsc(DAS_out,fs)
 
