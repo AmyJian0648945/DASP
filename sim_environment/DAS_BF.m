@@ -2,7 +2,7 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
-NoiseFile =  {'Babble_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+NoiseFile =  {'White_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
@@ -65,7 +65,7 @@ d_m = ((1:numOfMics)-1).*d;
 delay = d_m*cos(DOA_est_rad)*fs./c %%% this are samples 
 delay = round(delay)
 
-%%%% STEP 1 : DELAY; cicrcular shifting for alligning signals 
+%%%% STEP 1 : DELAY; cicrcular shifting for aligning signals 
 for k=1:1:numOfMics
     mic(:,k) = circshift(mic(:,k),delay(k));
     micSource(:,k) = circshift(micSource(:,k),delay(k));
