@@ -2,7 +2,7 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
-NoiseFile =  {'speech2.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+NoiseFile =  {'Babble_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
@@ -86,10 +86,10 @@ speech_DAS = sum(micSource,2)./numOfMics;
 noise_DAS = sum(micNoise,2)./numOfMics;
 
 %% Plotting results
-figure 
-plot(mic(:,1))
-hold on 
-plot(DAS_out)
+% figure 
+% plot(mic(:,1))
+% hold on 
+% plot(DAS_out)
 
 %% Computation of SNR for the DAS
 %%% the theoretical gain should be M (#number of microphones) --> + 7dB for
