@@ -13,8 +13,4 @@ elseif(DOA_est > 1) DOA_est = 1;
 else 
 end 
 DOA_est = rad2deg(acos(DOA_est));
-
-
-
-
 save('DOA_est.mat','DOA_est')

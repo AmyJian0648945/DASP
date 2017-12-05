@@ -31,7 +31,7 @@ for i=1:1:size(micTrunc, 2)
 
 		% Pass through blocking matrix
 		X_blockL = Ca * X_blockL;
-		listenToCa = [listenToCa X_blockL];
+		%listenToCa = [listenToCa X_blockL];
 
 		% Calculate output: desiredSigal - filteredX
 		GSC_out(i) = DAS_out(i) - sum(diag(X_blockL*W_blockL'));
@@ -44,7 +44,7 @@ for i=1:1:size(micTrunc, 2)
 	
 end
  
-listenToCa = fliplr(listenToCa);
+%listenToCa = fliplr(listenToCa);
 
 %% Computation of SNR for the GSC
 GSC_out = GSC_out';

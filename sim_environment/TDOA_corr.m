@@ -27,7 +27,7 @@ end
 TDOAgndTruth = delay(1);
 
 % Generates the Microphone signal
-mic = computeMicSig(computed_rir,5);
+mic = computeMicSig(computed_rir,10);
 
 %% Estimation of TDOA via cross-correlation
 % Step 1: Cross Correlation
@@ -42,10 +42,10 @@ TDOAest = lag(peakLocation);
 % Check the estimation against the ground truth 
 TDOAestError = abs(TDOAest) - abs(TDOAgndTruth)
 
-% % Plot the Cross-correlation function, with ground truth marked
-% figure
-% hold on
-% plot(r)
-% % stem(find(lag == TDOAgndTruth), peakValue) 
-% hold off
+% Plot the Cross-correlation function, with ground truth marked
+figure
+hold on
+plot(r)
+% stem(find(lag == TDOAgndTruth), peakValue) 
+hold off
 end

@@ -26,7 +26,7 @@ lenMicSig = 5;		% length of desired microphone signal [sec]
 % source_speech{i,1} is the signal itself while source speech is
 % source_speech{i,2} is the sampling frequency fs
 for i=1:1:numOfSources
-	[source_speech{i,1},source_speech{i,2}] = audioread('speech2.wav');
+	[source_speech{i,1},source_speech{i,2}] = audioread('White_noise1.wav');
 end
 for i=1:1:numOfNoiseSources
 	[source_noise{i,1},source_noise{i,2}] = audioread('White_noise1.wav');

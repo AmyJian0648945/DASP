@@ -2,7 +2,15 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
+<<<<<<< Updated upstream
 NoiseFile =  {'speech2.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+=======
+<<<<<<< Updated upstream
+NoiseFile =  {'White_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+=======
+NoiseFile = {'White_noise1.wav'};% {'White_noise1.wav', 'Babble_noise1.wav'};
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
@@ -48,6 +56,7 @@ p_hat = exp((log_p_hat));
 % sort the peaks in descending order, and only take into account the number
 %  of peaks that correspond to the number of sources
 [P,I] = sort(peaks,'descend');
+<<<<<<< Updated upstream
 % DOA_est_rad = theta(locs(I(1:numOfSources)));
 % DOA_est = rad2deg(DOA_est_rad);
 
@@ -59,6 +68,12 @@ DOA_est = DOA_est(IndexClosestVal);
 DOA_est_rad = deg2rad(DOA_est);
 
 
+=======
+DOA_est_rad = theta(locs(I));
+DOA_est = rad2deg(DOA_est_rad);
+[closetVal,IndexClosestVal] = min(abs(DOA_est-90))
+DOA_est = DOA_est(IndexClosestVal);
+>>>>>>> Stashed changes
 % Store the DOA estimate
 save('DOA_est.mat','DOA_est');
 
