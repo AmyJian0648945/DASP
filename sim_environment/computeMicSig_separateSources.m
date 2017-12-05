@@ -13,7 +13,7 @@ function [micSource, micNoise] = computeMicSig_separateSources(computed_rir)
 
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2); %% number of microphones in the scenario
-numOfSources = size(computed_rir.s_pos,1); %% number of signal sources in the scenario
+numOfSources = size(computed_rir.RIR_sources,3); %% number of signal sources in the scenario
 numOfNoiseSources = size(computed_rir.v_pos,1); %% number of noise sources in the scenario
 source_speech = cell(numOfSources,2); % defining cells for audio sources 
 source_noise = cell(numOfNoiseSources,2);% defining cells for noise sources 
