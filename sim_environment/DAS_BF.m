@@ -2,7 +2,7 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
-NoiseFile =  {'White_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+NoiseFile =  {'speech2.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
@@ -13,11 +13,13 @@ fs = computed_rir.fs_RIR;
 load('SNR_in.mat');
 %load('mic.mat');
 
+
 %% WIDEBAND MUSIC Algorithm 
 numOfMics = size(computed_rir.RIR_sources,2);
 numOfSources = size(computed_rir.s_pos,1); %%% identifying Q 
 theta = 0 : 0.5 : 180;
 theta = deg2rad(theta);
+
 %%% Find the STFT and the corresponding PSD 
 % DFT window length L = 1024, and 50% overlap (each column contains stft estimate of each window) 
 %	stftMat:	matrix of L(frequency bins) x time bins x numOfMics 
@@ -27,6 +29,7 @@ L = 1024;
 for i=1:1:numOfMics
     [stftMat(:,:,i), freq, ~, psd(:,:,i)] = spectrogram(mic(:,i), hann(L), [], 1*L, computed_rir.fs_RIR, 'psd');
 end
+
 % For each iterated frequency, evaluate the pseudo spectrum
 %  where pw: matrix of theta x 1
 pw = ones(length(theta),L./2);
@@ -34,22 +37,35 @@ for k=2:1:L./2
     freq_k = freq(k);
 	pw(:,k-1) = MUSIC_pseudoSpectrum_singFreq(k,freq_k,stftMat,computed_rir,theta);
 end
+
 %%% Computing P_hat(theta)
 log_p_hat = 1./(L./2 -1) .* (sum(log(pw),2));
 p_hat = exp((log_p_hat));
+
 % find the location of all peaks
 [peaks,locs] = findpeaks(abs(p_hat));
+
 % sort the peaks in descending order, and only take into account the number
 %  of peaks that correspond to the number of sources
 [P,I] = sort(peaks,'descend');
-DOA_est_rad = theta(locs(I(1:numOfSources)));
+% DOA_est_rad = theta(locs(I(1:numOfSources)));
+% DOA_est = rad2deg(DOA_est_rad);
+
+DOA_est_rad = theta(locs(I));
+
 DOA_est = rad2deg(DOA_est_rad);
+[closetVal,IndexClosestVal] = min(abs(DOA_est-90));
+DOA_est = DOA_est(IndexClosestVal);
+DOA_est_rad = deg2rad(DOA_est);
+
+
 % Store the DOA estimate
 save('DOA_est.mat','DOA_est');
 
 % Plot the pseudospectrum p_hat
 red_line = zeros(1,length(theta));
 red_line(locs(I(1:numOfSources))) = abs(p_hat(locs(I(1:numOfSources))));
+
 % Plot the pseudospectrum
 figure('Name', 'Pseudospectrum \hat{p}(\theta)');
 plot(abs(p_hat))
@@ -90,6 +106,7 @@ noise_DAS = sum(micNoise,2)./numOfMics;
 % plot(mic(:,1))
 % hold on 
 % plot(DAS_out)
+
 
 %% Computation of SNR for the DAS
 %%% the theoretical gain should be M (#number of microphones) --> + 7dB for
