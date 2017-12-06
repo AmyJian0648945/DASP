@@ -22,6 +22,10 @@
 
 function [mic, micSource, micNoise] = computeMicSig(computed_rir,lenMicSig, flag_output, flag_input, filename_source, filename_noise)
 
+% Testing the sampling frequency --> should be 44.1kHz for session 3 
+if (computed_rir.fs_RIR ~= 44.1e3)
+    error('The sampling frequency is not 44.1 kHz');
+end
 % Initialisation
 numOfMics = size(computed_rir.RIR_sources,2); %% number of microphones in the scenario
 numOfSources = size(computed_rir.s_pos,1); %% number of signal sources in the scenario
