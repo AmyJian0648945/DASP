@@ -21,7 +21,7 @@ listenToCa = [];
 for i=1:1:size(micTrunc, 2)
 	
 	% Check if there is speech signal present
-	if(VAD==0)
+	if(VAD(i)==0)
 		% Get windowed signal: MxL
 		if(i < L) %i.e. if the window isn't within the signal, append with zeros
 			X_blockL = [zeros(size(micTrunc,1), L-i) micTrunc(:,1:i)];
@@ -31,7 +31,7 @@ for i=1:1:size(micTrunc, 2)
 
 		% Pass through blocking matrix
 		X_blockL = Ca * X_blockL;
-		listenToCa = [listenToCa X_blockL];
+		%listenToCa = [listenToCa X_blockL];
 
 		% Calculate output: desiredSigal - filteredX
 		GSC_out(i) = DAS_out(i) - sum(diag(X_blockL*W_blockL'));
@@ -44,7 +44,7 @@ for i=1:1:size(micTrunc, 2)
 	
 end
  
-listenToCa = fliplr(listenToCa);
+%listenToCa = fliplr(listenToCa);
 
 %% Computation of SNR for the GSC
 GSC_out = GSC_out';
