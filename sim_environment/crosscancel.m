@@ -1,5 +1,6 @@
 clear all;
 load('Computed_RIRs.mat');
+computed_rir = load('Computed_RIRs.mat'); 
 %% Variables Init
 lenMicSig = 10; % 10 sec of speech
 fs_resample = 8e3; % sampling frequency 
@@ -13,8 +14,8 @@ RIR_sources = RIR_sources(1:1500,:,:);
 Lh = size(RIR_sources,1);
 M = size(s_pos,1);
 Lg = ceil(2*(Lh-1)./(M-2)); %% condition for having same amount of equations as of unknowns
-xL = zeros(Lg+Lh-1,1); xL(1:1500) = RIR_sources(:,1,3); 
-xR = zeros(Lg+Lh-1,1); xR(1:1500) = RIR_sources(:,2,3);
+xL = zeros(Lg+Lh-1,1); xL(1:1500) = RIR_sources(:,1,1); 
+xR = zeros(Lg+Lh-1,1); xR(1:1500) = RIR_sources(:,2,1);
 %xL = zeros(Lg+Lh-1,1); xL(1) = 1;
 %xR = zeros(Lg+Lh-1,1); xR(1) = 1;
 %xL = 1;
@@ -54,7 +55,15 @@ g = H\x;
 synth_error = norm(H*g-x)
 
 %% Filtering 
-binaural_sig = [fftfilt(xL,source_speech1,samplesToKeep) fftfilt(xR,source_speech1,samplesToKeep) ];
+
+SourceFile = {'speech1.wav'};%, 'speech2.wav'};
+NoiseFile = {}; %'White_noise1.wav', 'Babble_noise1.wav'};
+flag_output = 1;
+flag_input = 1;
+
+mic = []; 
+[mic, ~, ~] = computeMicSig(computed_rir,10,flag_output,flag_input,SourceFile, NoiseFile); 
+binaural_sig = [fftfilt(g,mic(:,1),samplesToKeep) fftfilt(g,mic(:,2),samplesToKeep) ];
 
 
 %% Plot results 
