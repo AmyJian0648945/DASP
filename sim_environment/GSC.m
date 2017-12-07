@@ -15,8 +15,8 @@ X_blockL = zeros(numOfMics-1, L); % X_blockL: (M-1)xL
 W_blockL = zeros(numOfMics-1, L); % W_blockL: (M-1)xL
 micTrunc = micTrunc';
 GSC_out = zeros(1,size(micTrunc,2));
+listenToNoiseRef = GSC_out;
 
-listenToCa = [];
 % Multichannel NLMS Function
 for i=1:1:size(micTrunc, 2)
 	
@@ -31,8 +31,8 @@ for i=1:1:size(micTrunc, 2)
 
 		% Pass through blocking matrix
 		X_blockL = Ca * X_blockL;
-		%listenToCa = [listenToCa X_blockL];
-
+		listenToNoiseRef(i) = X_blockL(1,L);
+		
 		% Calculate output: desiredSigal - filteredX
 		GSC_out(i) = DAS_out(i) - sum(diag(X_blockL*W_blockL'));
 
@@ -44,7 +44,7 @@ for i=1:1:size(micTrunc, 2)
 	
 end
  
-%listenToCa = fliplr(listenToCa);
+
 
 %% Computation of SNR for the GSC
 GSC_out = GSC_out';
