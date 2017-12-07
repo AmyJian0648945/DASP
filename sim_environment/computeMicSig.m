@@ -165,6 +165,8 @@ if(flag_output == 1 || flag_output == 3)
 	if(flag_output == 3) %%% For Session 3 %%%
 		
 		% Identify where speech signals are active
+        % This compute the standard deviation and take 0.1% of it 
+        % 
 		VAD = abs(speechTot(:,1))>std(speechTot(:,1))*1e-3;
 
 		% Find the power of the signal of mic1 (where its active)
