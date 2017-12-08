@@ -14,12 +14,15 @@ RIR_sources = RIR_sources(1:1500,:,:);
 Lh = size(RIR_sources,1);
 M = size(s_pos,1);
 Lg = ceil(2*(Lh-1)./(M-2)); %% condition for having same amount of equations as of unknowns
-xL = zeros(Lg+Lh-1,1); xL(1:1500) = RIR_sources(:,1,1); 
-xR = zeros(Lg+Lh-1,1); xR(1:1500) = RIR_sources(:,2,1);
+xL = zeros(Lg+Lh-1,1); xL(1:1500) = RIR_sources(:,1,5); 
+xR = zeros(Lg+Lh-1,1); xR(1:1500) = RIR_sources(:,2,5);
 %xL = zeros(Lg+Lh-1,1); xL(1) = 1;
 %xR = zeros(Lg+Lh-1,1); xR(1) = 1;
 %xL = 1;
 %xR = [1);
+temp = RIR_sources(:,2,5);
+xL = zeros(Lg+Lh-1,1); xL(1:1500) = RIR_sources(:,1,5); 
+xR = zeros(Lg+Lh-1,1); xR(1:1500) = [zeros(9,1); temp(10:end)];
 
 
 delta = ceil(sqrt(room_dim(1)^2 + room_dim(2)^2)*fs_RIR./340);
@@ -50,6 +53,7 @@ sum_of_index = sum(index_rows_zeros,2);
 index_2 = (sum_of_index==M*Lg);
 H(index_2,:) =[]; 
 x(index_2) = [];
+
 %% Solving the SOE
 g = H\x;
 synth_error = norm(H*g-x)
@@ -66,11 +70,30 @@ mic = [];
 binaural_sig = [fftfilt(g,mic(:,1),samplesToKeep) fftfilt(g,mic(:,2),samplesToKeep) ];
 
 
-%% Plot results 
-figure 
-plot(x,'r');
-hold on 
-plot(H*g,'b');
+%% Same as binaural_synthesis 
+x = binaural_sig;
+binaural_sig1_1 = [x x];
+binaural_sig2_1 = [x 0.5.*x];
+right_sig = [0; 0; 0; x(1:end-3)];
+binaural_sig3_1 = [x right_sig];
+binaural_sig4_1 = [fftfilt(HRTF(:,1),x,samplesToKeep) fftfilt(HRTF(:,2),x,samplesToKeep) ];
 
-figure, spy(H)
-%soundsc(binaural_sig,8e3)
+
+
+%% Plot results 
+% figure 
+% plot(x,'r');
+% hold on 
+% plot(H*g,'b');
+
+% figure, spy(H)
+% soundsc(binaural_sig,8e3)
+
+
+
+
+
+
+
+
+
