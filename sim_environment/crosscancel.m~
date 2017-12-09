@@ -1,7 +1,6 @@
 clear all;
 load('Computed_RIRs.mat');
 computed_rir = load('Computed_RIRs.mat'); 
-load('HRTF.mat');
 %% Variables Init
 lenMicSig = 10; % 10 sec of speech
 fs_resample = 8e3; % sampling frequency 
@@ -27,18 +26,15 @@ switch n
     case 2
         temp = RIR_sources(:,2,1);
         xL = zeros(Lg+Lh-1,1); xL(1:1600) = RIR_sources(:,1,1);
-        xR = zeros(Lg+Lh-1,1); xR(1:1600) = 0.2.*temp;
+        xR = zeros(Lg+Lh-1,1); xR(1:1600) = 0.5.*temp;
         
     case 3
         temp = RIR_sources(:,2,1);
         xL = zeros(Lg+Lh-1,1); xL(1:1600) = RIR_sources(:,1,1);
         xR = zeros(Lg+Lh-1,1); xR(1:1600) = [zeros(10,1); temp(1:end-10)];
     case 4
-        temp = RIR_sources(:,2,1);
-        xL = zeros(Lg+Lh-1,1); xL(1:1600) = RIR_sources(:,1,1);
-        xR = zeros(Lg+Lh-1,1); xR(1:1600) = [zeros(10,1); temp(1:end-10)];
-        xL = fftfilt(HRTF(:,1),xL,Lg+Lh-1);
-        xR = fftfilt(HRTF(:,2),xR,Lg+Lh-1);
+        xL = fftfilt(HRTF(:,1),RIR_sources(:,1,1),1600);
+        xR = fftfilt(HRTF(:,2),RIR_sources(:,2,1),1600);
         
 end
 
@@ -85,9 +81,18 @@ flag_input = 1;
 
 mic = []; 
 [mic, ~, ~] = computeMicSig4(computed_rir,10,flag_output,flag_input,SourceFile, NoiseFile,g,Lg); 
-
+%binaural_sig = [fftfilt(g,mic(:,1),samplesToKeep) fftfilt(g,mic(:,2),samplesToKeep) ];
 binaural_sig_expected = [fftfilt(xL,source_speech1,samplesToKeep) fftfilt(xR,source_speech1,samplesToKeep) ];
 binaural_sig_with_g = [mic(:,1) mic(:,2)];
+%% Same as binaural_synthesis 
+% x = binaural_sig;
+% binaural_sig1_1 = [x x];
+% binaural_sig2_1 = [x 0.5.*x];
+% right_sig = [0; 0; 0; x(1:end-3)];
+% binaural_sig3_1 = [x right_sig];
+% binaural_sig4_1 = [fftfilt(HRTF(:,1),x,samplesToKeep) fftfilt(HRTF(:,2),x,samplesToKeep) ];
+
+
 
 %% Plot results 
 % figure 
