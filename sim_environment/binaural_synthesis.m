@@ -23,4 +23,10 @@ binaural_sig1_2 = [x x];
 binaural_sig2_2 = [0.5.*x x];
 left_sig = [0; 0; 0; x(1:end-3)];
 binaural_sig3_2 = [left_sig  x];
-binaural_sig4_2 = [fftfilt(HRTF(:,1),x,samplesToKeep) fftfilt(HRTF(:,2),x,samplesToKeep) ];
+binaural_sig4_2 = [fftfilt(HRTF(:,2),x,samplesToKeep) fftfilt(HRTF(:,1),x,samplesToKeep) ];
+
+%% Combination of the two
+binaural_sig1 = binaural_sig1_1 + binaural_sig1_2;
+binaural_sig2 = binaural_sig2_1 + binaural_sig2_2;
+binaural_sig3 = binaural_sig3_1 + binaural_sig3_2;
+binaural_sig4 = binaural_sig4_1 + binaural_sig4_2;

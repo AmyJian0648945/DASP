@@ -20,7 +20,7 @@
 %	Note: The method of truncation that we used might yield an error
 
 
-function [mic, micSource, micNoise] = computeMicSig4(computed_rir,lenMicSig, flag_output, flag_input, filename_source, filename_noise,g,Lg)
+function [mic, micSource, micNoise] = computeMicSig4(computed_rir,lenMicSig, flag_output, flag_input, filename_source, filename_noise,g,Lg,mic_listen)
 
 %Testing the sampling frequency --> should be 8kHz for session 4 
 if (computed_rir.fs_RIR ~=8e3)
@@ -126,15 +126,16 @@ micSource = []; micNoise = [];
 
 
 if(flag_output == 1 || flag_output == 3)
+	numOfMics = 2;
 	for i = 1:1:numOfMics
 		speech = zeros(leng,1);
 		if(numOfSources > 0)
-			speech = fftfilt(computed_rir.RIR_sources(:,i,1),source_speech{1,1},leng);%% audio signal is filtered by the Room IR
+			speech = fftfilt(computed_rir.RIR_sources(:,mic_listen(i),1),source_speech{1,1},leng);%% audio signal is filtered by the Room IR
             speech = fftfilt(g_mic(:,1),speech,leng);
 		end
 		if(numOfSources > 1)
 			for j = 2:1:numOfSources 
-                tempSpeech = fftfilt(computed_rir.RIR_sources(:,i,j),source_speech{j,1},leng);
+                tempSpeech = fftfilt(computed_rir.RIR_sources(:,mic_listen(i),j),source_speech{j,1},leng);
 				speech = speech + fftfilt(g_mic(:,j),tempSpeech,leng); % each mic received a weighted sum of audio signal. Weights are the RIR 
 			end
 		end 
