@@ -126,7 +126,7 @@ x(index_2) = [];
 xB(index_2) = [];
 
 %% Adding white noise to H
-% H = H + std(H(:,1)).* 0.05.* randn(size(H,1),size(H,2));
+ H = H + std(H(:,1)).* 0.05.* randn(size(H,1),size(H,2));
 
 %% Solving the SOE
 g = H\x;
@@ -175,7 +175,7 @@ hold on
 plot(H*g,'b');
 legend('x','H*g')
 %
-% figure, spy(H)
+figure, spy(H)
 %soundsc(binaural_sig,8e3)
 
 
