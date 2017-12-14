@@ -2,14 +2,14 @@ clear all;
 
 %% Create Speech Ref: Running DAS_BF file
 DAS_BF % this loads all of the audio files, sets the flags...etc. 
-
+close all;
 %% Running GSC: NLMS & Updating W
 
-% Create Blocking Matrix
+% Create Blocking Matrix (Griffths-Jim blocking matrix)
 Ca = [ones(numOfMics-1,1) diag(-ones(numOfMics-1,1))];
 
 % Initialisations
-u = 0.1; % step size
+u = 0.1; % step size (must be between 0 and 2 for stability)
 L = 1024; % filter size
 X_blockL = zeros(numOfMics-1, L); % X_blockL: (M-1)xL
 W_blockL = zeros(numOfMics-1, L); % W_blockL: (M-1)xL
@@ -26,7 +26,7 @@ for i=1:1:size(micTrunc, 2)
 		if(i < L) %i.e. if the window isn't within the signal, append with zeros
 			X_blockL = [zeros(size(micTrunc,1), L-i) micTrunc(:,1:i)];
 		else
-			X_blockL = micTrunc(:, i-L+1:i);
+			X_blockL = micTrunc(:, i-L+1:i); %keeping L last samples 
 		end 
 
 		% Pass through blocking matrix

@@ -2,7 +2,7 @@ clear all;
 
 %% Running the create micSig script
 SourceFile = {'speech1.wav'};%, 'speech2.wav'};
-NoiseFile =  {'White_noise1.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
+NoiseFile =  {'speech2.wav'};% {'White_noise1.wav','Babble_noise1.wav'};
 computed_rir = load('Computed_RIRs.mat'); 
 flag_output = 3;
 flag_input = 4;
@@ -64,7 +64,7 @@ save('DOA_est.mat','DOA_est');
 
 % Plot the pseudospectrum p_hat
 red_line = zeros(1,length(theta));
-red_line(locs(I(1:numOfSources))) = abs(p_hat(locs(I(1:numOfSources))));
+red_line(locs(I(IndexClosestVal))) = abs(p_hat(locs(I(IndexClosestVal))));
 
 % Plot the pseudospectrum
 figure('Name', 'Pseudospectrum \hat{p}(\theta)');
@@ -102,10 +102,15 @@ speech_DAS = sum(micSource,2)./numOfMics;
 noise_DAS = sum(micNoise,2)./numOfMics;
 
 %% Plotting results
-% figure 
-% plot(mic(:,1))
-% hold on 
-% plot(DAS_out)
+figure 
+plot(mic(:,1),'b')
+hold on 
+plot(DAS_out,'r')
+title('Results obtained using DAS matched filter')
+legend('Without DAS','With DAS')
+ylabel('Amplitiude')
+xlabel('samples [n]')
+
 
 
 %% Computation of SNR for the DAS
