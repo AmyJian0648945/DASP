@@ -1,6 +1,5 @@
 % clear all;
 load('HRTF.mat')
-computed_rir_Xtalk = load('Computed_RIRs_Xtalk.mat');
 %% Variables Init
 lenMicSig = 10; % 10 sec of speech
 fs_resample = 8e3; % sampling frequency 
@@ -34,11 +33,10 @@ binaural_sig4 = binaural_sig4_1 + binaural_sig4_2;
 
 
 %% Testing cross-talk effect
-SourceFile = {'speech1.wav', 'speech2.wav'};
+SourceFile = {'speech2.wav'};%, 'speech2.wav'};
 NoiseFile = {}; %'White_noise1.wav', 'Babble_noise1.wav'};
 flag_output = 1;
-flag_input = 2;
+flag_input = 1;
 
-micXtalk = [];
-[micXtalk, ~, ~] = computeMicSig(computed_rir_Xtalk,10,flag_output,flag_input,SourceFile, NoiseFile);
-Xtalk = [micXtalk(:,1) micXtalk(:,2)];
+micB = [];
+[micB, ~, ~] = computeMicSig4(computed_rir,10,flag_output,flag_input,SourceFile, NoiseFile,gB,Lg, mic_listen);
