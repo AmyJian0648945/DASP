@@ -8,8 +8,13 @@ fs_resample = 8e3; % sampling frequency
 samplesToKeep = fs_resample.*lenMicSig;
 
 RIR_length = 1600;
+
 mic_synth = [1 2];
 mic_listen = [1 2];
+
+% to toggle the sweetspot: uncomment these code:
+% mic_synth = [1 4];
+% mic_listen = [2 5];
 
 %% Speech 1 Reformatting
 source_speech = cell(1,2); [source_speech{1,1},source_speech{1,2}] = audioread('speech1.wav');
