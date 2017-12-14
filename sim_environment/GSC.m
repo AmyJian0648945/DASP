@@ -17,6 +17,11 @@ micTrunc = micTrunc';
 GSC_out = zeros(1,size(micTrunc,2));
 listenToNoiseRef = GSC_out;
 
+% 		DAS_out_without_delay = DAS_out;
+% 		DAS_out = [zeros(L/2,1); DAS_out(1:end-L/2)];
+		
+DAS_out = [zeros(L/2,1); DAS_out];
+
 % Multichannel NLMS Function
 for i=1:1:size(micTrunc, 2)
 	
@@ -67,7 +72,8 @@ hold on
 plot(mic(:,1),'b')
 plot(DAS_out,'r')
 plot(GSC_out,'g')
-% plot(speech_DAS,'k')
+plot(speech_DAS,'k')
+legend('Speech signal','DAS filtered','GSC filtered','Speech signal without noise')
 hold off
 
 % Listening to the difference
